@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly: default 1`] = `
+<Fragment>
+  <hr
+    className="big-spacer-top big-spacer-bottom"
+  />
+  <p>
+    <strong>
+      onboarding.analysis.auto_refresh_after_analysis.done
+    </strong>
+     
+    onboarding.analysis.auto_refresh_after_analysis.auto_refresh
+  </p>
+  <p
+    className="big-spacer-top"
+  >
+    onboarding.analysis.auto_refresh_after_analysis.set_up_pr_deco_and_ci
+  </p>
+  <p
+    className="big-spacer-top"
+  >
+    <FormattedMessage
+      defaultMessage="onboarding.analysis.auto_refresh_after_analysis.check_these_links"
+      id="onboarding.analysis.auto_refresh_after_analysis.check_these_links"
+      values={
+        Object {
+          "link_branches": <Link
+            onlyActiveOnIndex={false}
+            rel="noopener noreferrer"
+            style={Object {}}
+            target="_blank"
+            to="/documentation/branches/overview/"
+          >
+            onboarding.analysis.auto_refresh_after_analysis.check_these_links.branches
+          </Link>,
+          "link_pr_analysis": <Link
+            onlyActiveOnIndex={false}
+            rel="noopener noreferrer"
+            style={Object {}}
+            target="_blank"
+            to="/documentation/analysis/pull-request/"
+          >
+            onboarding.analysis.auto_refresh_after_analysis.check_these_links.pr_analysis
+          </Link>,
+        }
+      }
+    />
+  </p>
+</Fragment>
+`;
+
+exports[`should render correctly: project admin 1`] = `
+<Fragment>
+  <hr
+    className="big-spacer-top big-spacer-bottom"
+  />
+  <p>
+    <strong>
+      onboarding.analysis.auto_refresh_after_analysis.done
+    </strong>
+     
+    onboarding.analysis.auto_refresh_after_analysis.auto_refresh
+  </p>
+  <p
+    className="big-spacer-top"
+  >
+    onboarding.analysis.auto_refresh_after_analysis.set_up_pr_deco_and_ci.admin
+  </p>
+  <p
+    className="big-spacer-top"
+  >
+    <FormattedMessage
+      defaultMessage="onboarding.analysis.auto_refresh_after_analysis.check_these_links"
+      id="onboarding.analysis.auto_refresh_after_analysis.check_these_links"
+      values={
+        Object {
+          "link_branches": <Link
+            onlyActiveOnIndex={false}
+            rel="noopener noreferrer"
+            style={Object {}}
+            target="_blank"
+            to="/documentation/branches/overview/"
+          >
+            onboarding.analysis.auto_refresh_after_analysis.check_these_links.branches
+          </Link>,
+          "link_pr_analysis": <Link
+            onlyActiveOnIndex={false}
+            rel="noopener noreferrer"
+            style={Object {}}
+            target="_blank"
+            to="/documentation/analysis/pull-request/"
+          >
+            onboarding.analysis.auto_refresh_after_analysis.check_these_links.pr_analysis
+          </Link>,
+        }
+      }
+    />
+  </p>
+</Fragment>
+`;

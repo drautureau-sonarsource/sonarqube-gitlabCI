@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly 1`] = `
+<Fragment>
+  <RenderOptions
+    checked="dotnet_core"
+    name="variant"
+    onCheck={[Function]}
+    optionLabelKey="onboarding.build.dotnet.variant"
+    options={
+      Array [
+        "dotnet_core",
+        "dotnet_framework",
+      ]
+    }
+    titleLabelKey="onboarding.build.dotnet.variant"
+  />
+  <DotNetCore
+    component={
+      Object {
+        "breadcrumbs": Array [],
+        "key": "projectKey",
+        "name": "MyProject",
+        "qualifier": "TRK",
+        "qualityGate": Object {
+          "isDefault": true,
+          "key": "30",
+          "name": "Sonar way",
+        },
+        "qualityProfiles": Array [
+          Object {
+            "deleted": false,
+            "key": "my-qp",
+            "language": "ts",
+            "name": "Sonar way",
+          },
+        ],
+        "tags": Array [],
+      }
+    }
+    host="host"
+    token="token"
+  />
+</Fragment>
+`;

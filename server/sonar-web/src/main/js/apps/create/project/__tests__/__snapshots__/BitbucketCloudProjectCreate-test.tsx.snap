@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Should render correctly 1`] = `
+<BitbucketCloudProjectCreateRenderer
+  canAdmin={true}
+  isLastPage={true}
+  loading={false}
+  loadingMore={false}
+  onImport={[Function]}
+  onLoadMore={[Function]}
+  onPersonalAccessTokenCreated={[Function]}
+  onSearch={[Function]}
+  repositories={Array []}
+  resetPat={false}
+  searchQuery=""
+  searching={false}
+  showPersonalAccessTokenForm={true}
+/>
+`;
+
+exports[`Should render correctly: Setting changeds 1`] = `
+<BitbucketCloudProjectCreateRenderer
+  canAdmin={true}
+  isLastPage={true}
+  loading={false}
+  loadingMore={false}
+  onImport={[Function]}
+  onLoadMore={[Function]}
+  onPersonalAccessTokenCreated={[Function]}
+  onSearch={[Function]}
+  repositories={Array []}
+  resetPat={false}
+  searchQuery=""
+  searching={false}
+  settings={
+    Object {
+      "alm": "bitbucketcloud",
+      "key": "key",
+    }
+  }
+  showPersonalAccessTokenForm={true}
+/>
+`;

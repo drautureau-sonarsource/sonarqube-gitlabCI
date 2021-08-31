@@ -1,0 +1,11 @@
+sonarqube {
+  properties {
+    property 'sonar.projectName', "${projectTitle} :: Check API"
+  }
+}
+
+configureCompileJavaToVersion 8
+
+dependencies {
+  compileOnly 'com.google.code.findbugs:jsr305'
+}

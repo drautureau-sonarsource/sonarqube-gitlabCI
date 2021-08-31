@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly 1`] = `
+<PRDecorationBindingRenderer
+  checkingConfiguration={false}
+  formData={
+    Object {
+      "key": "",
+      "monorepo": false,
+    }
+  }
+  instances={Array []}
+  isChanged={false}
+  isConfigured={false}
+  isSysAdmin={false}
+  isValid={false}
+  loading={true}
+  monorepoEnabled={false}
+  onCheckConfiguration={[Function]}
+  onFieldChange={[Function]}
+  onReset={[Function]}
+  onSubmit={[Function]}
+  successfullyUpdated={false}
+  updating={false}
+/>
+`;

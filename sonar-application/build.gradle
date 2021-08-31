@@ -1,0 +1,262 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+  id "com.github.johnrengelman.shadow"
+  id "de.undercouch.download"
+}
+
+sonarqube {
+  properties {
+    property 'sonar.projectName', "${projectTitle} :: Application"
+  }
+}
+
+configurations {
+  zip
+  jsw
+  scanner
+  web
+  shutdowner
+  jdbc_mssql {
+    transitive = false
+  }
+  jdbc_postgresql {
+    transitive = false
+  }
+  jdbc_h2 {
+    transitive = false
+  }
+  bundledPlugin {
+    transitive = false
+  }
+}
+
+jar.enabled = false
+shadowJar {
+  baseName = 'sonar-application'
+  classifier = null
+  mergeServiceFiles()
+  manifest {
+    attributes('Main-Class': 'org.sonar.application.App')
+  }
+}
+
+dependencies {
+    // please keep list ordered
+    compile 'org.slf4j:slf4j-api'
+
+    compile 'org.elasticsearch.client:elasticsearch-rest-high-level-client'
+    compile project(':server:sonar-ce')
+    compile project(':server:sonar-main')
+    compile project(':server:sonar-process')
+    compile project(':server:sonar-webserver')
+    compile project(':sonar-core')
+    compile project(path: ':sonar-plugin-api', configuration: 'shadow')
+    compile project(':sonar-plugin-api-impl')
+
+    compileOnly 'com.google.code.findbugs:jsr305'
+
+    jsw 'tanukisoft:wrapper:3.2.3'
+    scanner project(path: ':sonar-scanner-engine-shaded', configuration: 'shadow')
+    web project(':server:sonar-web')
+    shutdowner project(':sonar-shutdowner')
+
+    jdbc_h2 'com.h2database:h2'
+    jdbc_mssql 'com.microsoft.sqlserver:mssql-jdbc'
+    jdbc_postgresql 'org.postgresql:postgresql'
+}
+
+// declare dependencies in configuration bundledPlugin to be packaged in lib/extensions
+apply from: 'bundled_plugins.gradle'
+
+task verifyElasticSearchDownload(type: Verify) {
+  src new File(buildDir, "$elasticsearchDownloadUrlFile")
+  algorithm 'SHA-512'
+  checksum elasticsearchDownloadSha512
+}
+
+task downloadElasticSearch(type: Download) {
+  def artifactoryUsername = System.env.'ARTIFACTORY_PRIVATE_USERNAME' ?: (project.hasProperty('artifactoryUsername') ? project.getProperty('artifactoryUsername') : '')
+  def artifactoryPassword = System.env.'ARTIFACTORY_PRIVATE_PASSWORD' ?: (project.hasProperty('artifactoryPassword') ? project.getProperty('artifactoryPassword') : '')
+  if (artifactoryUsername && artifactoryPassword) {
+    src "$elasticsearchDownloadRepoxUrlPath$elasticsearchDownloadUrlFile"
+    username artifactoryUsername
+    password artifactoryPassword
+  } else {
+    src "$elasticsearchDownloadUrlPath$elasticsearchDownloadUrlFile"
+  }
+  dest "$buildDir/$elasticsearchDownloadUrlFile"
+  onlyIfModified true
+  finalizedBy verifyElasticSearchDownload
+}
+
+task zip(type: Zip, dependsOn: [configurations.compile, downloadElasticSearch, verifyElasticSearchDownload]) {
+  duplicatesStrategy DuplicatesStrategy.EXCLUDE
+  def archiveDir = "sonarqube-$project.version"
+
+  into("${archiveDir}/") {
+    from(file('src/main/assembly')) {
+      exclude 'conf/sonar.properties'
+      exclude 'conf/wrapper.conf'
+      exclude 'elasticsearch-patch'
+    }
+  }
+
+  from(tarTree(downloadElasticSearch.dest)) {
+    eachFile { fcd ->
+      def path = fcd.relativePath.segments - fcd.relativeSourcePath.segments + fcd.relativeSourcePath.segments.drop(1)
+      fcd.relativePath = new RelativePath(true, *path)
+    }
+    into("${archiveDir}/elasticsearch")
+    filesMatching('**/bin/elasticsearch-env') {
+      // to avoid warning logs
+      filter { line -> line.replaceAll('echo "warning: no-jdk distributions.*', ':') }
+    }
+    // elasticsearch script will be replaced by patched version below
+    exclude '**/bin/elasticsearch'
+    exclude '**/bin/elasticsearch-cli'
+    exclude '**/bin/elasticsearch-keystore'
+    exclude '**/bin/elasticsearch-node'
+    exclude '**/bin/elasticsearch-shard'
+    exclude '**/jdk/**'
+    exclude '**/lib/tools/**'
+    exclude '**/modules/aggs-matrix-stats/**'
+    exclude '**/modules/geo/**'
+    exclude '**/modules/ingest-common/**'
+    exclude '**/modules/ingest-geoip/**'
+    exclude '**/modules/ingest-user-agent/**'
+    exclude '**/modules/kibana/**'
+    exclude '**/modules/lang-expression/**'
+    exclude '**/modules/lang-mustache/**'
+    exclude '**/modules/mapper-extras/**'
+    exclude '**/modules/rank-eval/**'
+    exclude '**/modules/reindex/**'
+    exclude '**/modules/repository-url/**'
+    exclude '**/modules/tasks/**'
+    exclude '**/modules/constant-keyword/**'
+    exclude '**/modules/flattened/**'
+    exclude '**/modules/frozen-indices/**'
+    exclude '**/modules/mapper-version/**'
+    exclude '**/modules/repositories-metering-api/**'
+    exclude '**/modules/repository-encrypted/**'
+    exclude '**/modules/search-business-rules/**'
+    exclude '**/modules/searchable-snapshots/**'
+    exclude '**/modules/snapshot-repo-test-kit/**'
+    exclude '**/modules/spatial/**'
+    exclude '**/modules/transform/**'
+    exclude '**/modules/unsigned-long/**'
+    exclude '**/modules/vectors/**'
+    exclude '**/modules/wildcard/**'
+    exclude '**/modules/x-pack-*/**'
+    includeEmptyDirs = false
+  }
+
+  into("${archiveDir}/conf/") {
+    from file('src/main/assembly/conf/sonar.properties')
+    filter(ReplaceTokens, tokens: [
+            'searchDefaultHeapSize': '512MB',
+            'searchJavaOpts'       : '-Xmx512m -Xms512m -XX:MaxDirectMemorySize=256m -XX:+HeapDumpOnOutOfMemoryError',
+            'ceDefaultHeapSize'    : '512MB',
+            'ceJavaOpts'           : '-Xmx512m -Xms128m -XX:+HeapDumpOnOutOfMemoryError',
+            'webDefaultHeapSize'   : '512MB',
+            'webJavaOpts'          : '-Xmx512m -Xms128m -XX:+HeapDumpOnOutOfMemoryError'
+    ])
+  }
+  into("${archiveDir}/conf/") {
+    from file('src/main/assembly/conf/wrapper.conf')
+    filter(ReplaceTokens, tokens: [
+            'sqversion': version
+    ])
+  }
+  
+  into("${archiveDir}/elasticsearch/") {
+    from file('src/main/assembly/elasticsearch-patch')
+      include 'bin/elasticsearch'
+  }
+  // Create the empty dir (plugins) required by elasticsearch
+  into("${archiveDir}/elasticsearch/") {
+    from "$buildDir/elasticsearch"
+  }
+  into("${archiveDir}/lib/extensions/") {
+    from configurations.bundledPlugin
+  }
+  into("${archiveDir}/lib/jsw/") {
+    from configurations.jsw
+  }
+  into("${archiveDir}/lib/scanner/") {
+    from configurations.scanner
+  }
+  into("${archiveDir}/lib/") {
+    from shadowJar
+  }
+  into("${archiveDir}/web/") {
+    duplicatesStrategy DuplicatesStrategy.FAIL
+    // FIXME use configurations.web with correct artifacts
+    from(tasks.getByPath(':server:sonar-web:yarn_run').outputs) { a ->
+      if (official) {
+         project(':private:branding').fileTree('src').visit { b ->
+           if (!b.isDirectory()) {
+             a.exclude b.relativePath.toString()
+           }
+         }
+      }
+    }
+    if (official) {
+      from project(':private:branding').file('src')
+    }
+  }
+  into("${archiveDir}/lib/jdbc/mssql/") {
+    from configurations.jdbc_mssql
+  }
+  into("${archiveDir}/lib/jdbc/postgresql/") {
+    from configurations.jdbc_postgresql
+  }
+  into("${archiveDir}/lib/jdbc/h2/") {
+    from configurations.jdbc_h2
+  }
+  into("${archiveDir}/lib/") {
+    from configurations.shutdowner
+  }
+}
+// Create the empty dir required by elasticsearch
+zip.doFirst {
+  new File(buildDir, 'elasticsearch/plugins').mkdirs()
+}
+// Check the size of the archive
+zip.doLast {
+  def minLength = 274000000
+  def maxLength = 295000000
+
+  def length = archiveFile.get().asFile.length()
+  if (length < minLength)
+    throw new GradleException("$archiveName size ($length) too small. Min is $minLength")
+  if (length > maxLength)
+    throw new GradleException("$distsDir/$archiveName size ($length) too large. Max is $maxLength")
+}
+assemble.dependsOn zip
+
+// the script start.sh unpacks OSS distribution into $buildDir/distributions/sonarqube-oss.
+// This directory should be deleted when the zip is changed.
+task cleanLocalUnzippedDir(dependsOn: zip) {
+  def unzippedDir = file("$buildDir/distributions/sonarqube-$version")
+  inputs.files(file("$buildDir/distributions/sonar-application-${version}.zip"))
+  outputs.upToDateWhen { true }
+
+  doLast {
+    println("delete directory ${unzippedDir}")
+    project.delete(unzippedDir)
+  }
+}
+assemble.dependsOn cleanLocalUnzippedDir
+
+artifacts { zip zip }
+
+artifactoryPublish.skip = false
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      artifact zip
+    }
+  }
+}

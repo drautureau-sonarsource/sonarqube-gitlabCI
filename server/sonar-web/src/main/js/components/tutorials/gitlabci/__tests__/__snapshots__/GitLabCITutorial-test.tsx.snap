@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly 1`] = `
+<Fragment>
+  <div
+    className="page-header big-spacer-bottom"
+  >
+    <h1
+      className="page-title"
+    >
+      onboarding.tutorial.with.gitlab_ci.title
+    </h1>
+  </div>
+  <Connect(withCLanguageFeature(ProjectKeyStep))
+    component={
+      Object {
+        "breadcrumbs": Array [],
+        "key": "my-project",
+        "name": "MyProject",
+        "qualifier": "TRK",
+        "qualityGate": Object {
+          "isDefault": true,
+          "key": "30",
+          "name": "Sonar way",
+        },
+        "qualityProfiles": Array [
+          Object {
+            "deleted": false,
+            "key": "my-qp",
+            "language": "ts",
+            "name": "Sonar way",
+          },
+        ],
+        "tags": Array [],
+      }
+    }
+    finished={false}
+    onDone={[Function]}
+    onOpen={[Function]}
+    open={true}
+    setBuildTool={[Function]}
+  />
+  <EnvironmentVariablesStep
+    baseUrl="http://localhost:9000"
+    component={
+      Object {
+        "breadcrumbs": Array [],
+        "key": "my-project",
+        "name": "MyProject",
+        "qualifier": "TRK",
+        "qualityGate": Object {
+          "isDefault": true,
+          "key": "30",
+          "name": "Sonar way",
+        },
+        "qualityProfiles": Array [
+          Object {
+            "deleted": false,
+            "key": "my-qp",
+            "language": "ts",
+            "name": "Sonar way",
+          },
+        ],
+        "tags": Array [],
+      }
+    }
+    currentUser={
+      Object {
+        "groups": Array [],
+        "isLoggedIn": true,
+        "login": "luke",
+        "name": "Skywalker",
+        "scmAccounts": Array [],
+      }
+    }
+    finished={false}
+    onDone={[Function]}
+    onOpen={[Function]}
+    open={false}
+  />
+  <Connect(withAppState(YmlFileStep))
+    finished={false}
+    onDone={[Function]}
+    onOpen={[Function]}
+    open={false}
+    projectKey="my-project"
+  />
+  <AllSetStep
+    alm="gitlab"
+    open={false}
+    stepNumber={4}
+    willRefreshAutomatically={true}
+  />
+</Fragment>
+`;

@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly: bbc 1`] = `
+<Fragment>
+  <div
+    className="display-flex-column"
+  >
+    <strong>
+      settings.almintegration.form.choose_bitbucket_variant
+    </strong>
+    <RadioToggle
+      className="little-spacer-top big-spacer-bottom"
+      disabled={false}
+      name="variant"
+      onCheck={[MockFunction]}
+      options={
+        Array [
+          Object {
+            "label": "Bitbucket Server",
+            "value": "bitbucket",
+          },
+          Object {
+            "label": "Bitbucket Cloud",
+            "value": "bitbucketcloud",
+          },
+        ]
+      }
+      value="bitbucketcloud"
+    />
+  </div>
+  <BitbucketCloudForm
+    formData={
+      Object {
+        "clientId": "client1",
+        "clientSecret": "**clientsecret**",
+        "key": "key",
+        "workspace": "workspace",
+      }
+    }
+    onFieldChange={[MockFunction]}
+  />
+</Fragment>
+`;
+
+exports[`should render correctly: bbs 1`] = `
+<Fragment>
+  <div
+    className="display-flex-column"
+  >
+    <strong>
+      settings.almintegration.form.choose_bitbucket_variant
+    </strong>
+    <RadioToggle
+      className="little-spacer-top big-spacer-bottom"
+      disabled={false}
+      name="variant"
+      onCheck={[MockFunction]}
+      options={
+        Array [
+          Object {
+            "label": "Bitbucket Server",
+            "value": "bitbucket",
+          },
+          Object {
+            "label": "Bitbucket Cloud",
+            "value": "bitbucketcloud",
+          },
+        ]
+      }
+      value="bitbucket"
+    />
+  </div>
+  <BitbucketServerForm
+    formData={
+      Object {
+        "key": "key",
+        "personalAccessToken": "asdf1234",
+        "url": "http://bbs.enterprise.com",
+      }
+    }
+    onFieldChange={[MockFunction]}
+  />
+</Fragment>
+`;
+
+exports[`should render correctly: update bbc 1`] = `
+<Fragment>
+  <BitbucketCloudForm
+    formData={
+      Object {
+        "clientId": "client1",
+        "clientSecret": "**clientsecret**",
+        "key": "key",
+        "workspace": "workspace",
+      }
+    }
+    onFieldChange={[MockFunction]}
+  />
+</Fragment>
+`;
+
+exports[`should render correctly: update bbs 1`] = `
+<Fragment>
+  <BitbucketServerForm
+    formData={
+      Object {
+        "key": "key",
+        "personalAccessToken": "asdf1234",
+        "url": "http://bbs.enterprise.com",
+      }
+    }
+    onFieldChange={[MockFunction]}
+  />
+</Fragment>
+`;
